@@ -20,8 +20,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.apache.commons.text.StringSubstitutor;
-import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.hc.core5.util.Timeout;
 
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
@@ -90,7 +88,6 @@ public class Starter {
 	private StarterStatusStage starterStatusStage;
 	private ResourceBundle bundle;
 	private GsonService gsonService;
-	private RequestConfig requestConfig;
 	@Getter
 	private FileMapperService fileMapperService;
 	private FileCacheService fileService;
@@ -111,8 +108,6 @@ public class Starter {
 		starterStatusStage = stage;
 		this.bundle = bundle;
 		this.starterConfig = starterConfig;
-		requestConfig = RequestConfig.custom().setConnectTimeout(Timeout.ofMilliseconds(starterConfig.getConnectTimeout()))
-				.setResponseTimeout(Timeout.ofMilliseconds(starterConfig.getSocketTimeout())).build();
 		this.fileMapperService = fileMapperService;
 		domainAvailability = DesktopUtil.testServers(starterConfig.getTestURLs(), Main.client);
 		if (domainAvailability.hasInternet()) {
@@ -124,9 +119,8 @@ public class Starter {
 				Paths.get(starterConfig.getWorkDirectory(), "cache"), starterConfig.getTimeToLife(),
 				domainAvailability);
 		gsonService = new GsonServiceImpl(Main.GSON, fileService, httpService, domainAvailability);
-		downloader = new DownloaderImpl(eventBus, Main.client, requestConfig, domainAvailability, false);
-		updateCore = new UpdateCore(eventBus, requestConfig, bundle, gsonService, starterConfig, domainAvailability,
-				downloader);
+		downloader = new DownloaderImpl(eventBus, Main.client, domainAvailability, false);
+		updateCore = new UpdateCore(eventBus, bundle, gsonService, starterConfig, domainAvailability, downloader);
 		workDir = starterConfig.getWorkDirectory();
 
 	}

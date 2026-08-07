@@ -18,7 +18,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.hc.client5.http.config.RequestConfig;
 
 import com.google.common.eventbus.EventBus;
 
@@ -44,9 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 public class UpdateCore {
-
 	private EventBus eventBus;
-	private RequestConfig requestConfig;
 	private ResourceBundle bundle;
 	private GsonService gsonService;
 	private StarterAppConfig starterConfig;
@@ -72,6 +69,7 @@ public class UpdateCore {
 			boolean downloadNative = m.getRelativeUrl().endsWith("exe");
 			pb = DesktopUtil.preparedRestart(jarFile.getAbsolutePath(), Paths.get("").toAbsolutePath().toFile(), null,
 					null, downloadNative);
+
 			DownloaderContainer container = new DownloaderContainer();
 			PostHandlerImpl postHandler = new PostHandlerImpl();
 			String workDir = starterConfig.getWorkDirectory();
