@@ -99,6 +99,7 @@ public class Starter {
 	private AppLocalConfig appLocalConfig;
 	private JvmRepo java;
 	private InternetServerMap domainAvailability;
+	private Downloader downloader;
 
 	public Starter(EventBus eventBus, StarterAppConfig starterConfig, ResourceBundle bundle, StarterStatusStage stage,
 				   AppLocalConfig appLocalConfig, FileMapperService fileMapperService)
@@ -123,7 +124,9 @@ public class Starter {
 				Paths.get(starterConfig.getWorkDirectory(), "cache"), starterConfig.getTimeToLife(),
 				domainAvailability);
 		gsonService = new GsonServiceImpl(Main.GSON, fileService, httpService, domainAvailability);
-		updateCore = new UpdateCore(eventBus, requestConfig, bundle, gsonService, starterConfig, domainAvailability);
+		downloader = new DownloaderImpl(eventBus, Main.client, requestConfig, domainAvailability, false);
+		updateCore = new UpdateCore(eventBus, requestConfig, bundle, gsonService, starterConfig, domainAvailability,
+				downloader);
 		workDir = starterConfig.getWorkDirectory();
 
 	}
@@ -162,7 +165,6 @@ public class Starter {
 				Platform.runLater(() -> System.exit(4));
 				return;
 			}
-			Downloader downloader = new DownloaderImpl(eventBus, Main.client, requestConfig, domainAvailability, false);
 			DownloaderContainer container = new DownloaderContainer();
 			String serverFileUrn = starterConfig.getServerFileConfig(starterConfig, starterConfig.getVersion());
 			Repo resources;
@@ -239,6 +241,7 @@ public class Starter {
 			jreContainer.setHandlers(Arrays.asList(postHandler, archiveHandler));
 			downloader.addContainer(jreContainer);
 			downloader.startDownload(true);
+			downloader.reset();
 		} finally {
 			DesktopUtil.diactivateDoubleDownloadingResourcesLock();
 		}

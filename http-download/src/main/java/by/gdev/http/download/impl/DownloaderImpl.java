@@ -151,6 +151,24 @@ public class DownloaderImpl implements Downloader {
 		runnable.setStatus(DownloaderStatusEnum.CANCEL);
 	}
 
+	@Override
+	public void reset() throws StatusExeption {
+		if (status.equals(DownloaderStatusEnum.WORK)) {
+			throw new StatusExeption(status.toString());
+		}
+		downloadElements.clear();
+		processedElements.clear();
+		allContainerSize.clear();
+		fullDownloadSize = 0;
+		downloadBytesNow = 0;
+		sizeDownloadNow = 0;
+		allCountElement = null;
+		start = null;
+		pathToDownload = null;
+		status = DownloaderStatusEnum.IDLE;
+		runnable.setStatus(DownloaderStatusEnum.IDLE);
+	}
+
 	private DownloaderStatus buildDownloaderStatus() {
 		DownloaderStatus statusDownload = new DownloaderStatus();
 		long downloadBytesNow = 0;

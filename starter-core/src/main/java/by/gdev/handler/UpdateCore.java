@@ -26,7 +26,6 @@ import by.gdev.Main;
 import by.gdev.http.download.exeption.HashSumAndSizeError;
 import by.gdev.http.download.exeption.StatusExeption;
 import by.gdev.http.download.handler.PostHandlerImpl;
-import by.gdev.http.download.impl.DownloaderImpl;
 import by.gdev.http.download.service.Downloader;
 import by.gdev.http.download.service.GsonService;
 import by.gdev.http.upload.download.downloader.DownloaderContainer;
@@ -52,6 +51,7 @@ public class UpdateCore {
 	private GsonService gsonService;
 	private StarterAppConfig starterConfig;
 	private InternetServerMap domainAvailability;
+	private Downloader downloader;
 
 	public void checkUpdates(OSType osType)
 			throws IOException, StatusExeption, ExecutionException, InterruptedException {
@@ -72,7 +72,6 @@ public class UpdateCore {
 			boolean downloadNative = m.getRelativeUrl().endsWith("exe");
 			pb = DesktopUtil.preparedRestart(jarFile.getAbsolutePath(), Paths.get("").toAbsolutePath().toFile(), null,
 					null, downloadNative);
-			Downloader downloader = new DownloaderImpl(eventBus, Main.client, requestConfig, domainAvailability, false);
 			DownloaderContainer container = new DownloaderContainer();
 			PostHandlerImpl postHandler = new PostHandlerImpl();
 			String workDir = starterConfig.getWorkDirectory();
@@ -84,8 +83,12 @@ public class UpdateCore {
 			container.filterNotExistResoursesAndSetRepo(repo, workDir);
 			container.setDestinationRepositories(workDir);
 			container.setHandlers(Arrays.asList(postHandler));
-			downloader.addContainer(container);
-			downloader.startDownload(true);
+			try {
+				downloader.addContainer(container);
+				downloader.startDownload(true);
+			} finally {
+				downloader.reset();
+			}
 			Path temp = Paths.get(workDir, m.getPath());
 			String message = bundle.getString("update.message");
 			CountDownLatch latch = new CountDownLatch(1);

@@ -11,6 +11,7 @@ import com.google.common.eventbus.EventBus;
 import by.gdev.http.download.exeption.StatusExeption;
 import by.gdev.http.upload.download.downloader.DownloaderContainer;
 import by.gdev.http.upload.download.downloader.DownloaderStatus;
+import by.gdev.http.upload.download.downloader.DownloaderStatusEnum;
 
 /**
  * Allow to download files and show status of the downloading. Statistics and
@@ -44,4 +45,10 @@ public interface Downloader {
 	 * Allows you to interrupt the download
 	 */
 	void cancelDownload();
+
+	/**
+	 * Clears queues and counters after {@link #startDownload} has finished. Call before the next
+	 * {@link #addContainer} when reusing the same instance. Not allowed while {@link DownloaderStatusEnum#WORK}.
+	 */
+	void reset() throws StatusExeption;
 }
