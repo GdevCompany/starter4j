@@ -140,10 +140,10 @@ public class Main extends Application {
 			Starter s = new Starter(eventBus, starterConfig, bundle, starterStatusStage, appLocalConfig,
 					fileMapperService);
 			eventBus.register(new ConsoleSubscriber(bundle, s.getFileMapperService(), starterConfig));
-			s.cleanCache();
 			s.updateApplication();
 			s.validateEnvironmentAndAppRequirements();
 			s.prepareResources();
+			s.cleanCache();
 			s.runApp();
 
 		} catch (FileSystemException | IOExceptionList ex) {

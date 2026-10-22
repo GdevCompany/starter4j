@@ -80,7 +80,7 @@ public class StarterAppConfig {
 			null,
 			Arrays.asList("http://www.google.com", "http://www.baidu.com",
 					"https://github.com/gdevby/starter-app/blob/master/example-compiled-app/server/starter-app/appConfig.json"),
-			3, 5000, 10000, 600000, 10, false, null, false);
+			3, 5000, 10000, 15811200, 10, false, null, false);
 
 	public String getServerFileConfig(StarterAppConfig config, String version) {
 		return Objects.isNull(version) ? String.join("/", APP_CONFIG) : String.join("/", version, APP_CONFIG);

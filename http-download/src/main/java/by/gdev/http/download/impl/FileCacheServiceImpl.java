@@ -102,6 +102,8 @@ public class FileCacheServiceImpl implements FileCacheService {
 			if (Objects.isNull(localMetadata) || !Objects.equals(localMetadata.getSha1(), sha)) {
 				throw new IOException("sha not equals");
 			}
+			localMetadata.setLastAccessAt(System.currentTimeMillis());
+			fileMapperService.write(localMetadata, metaFile.toString());
 			return savedPath;
 		}
 		return null;
