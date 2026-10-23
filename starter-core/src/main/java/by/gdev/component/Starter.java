@@ -191,18 +191,26 @@ public class Starter {
 							AppConfig.class);
 				}
 				if (Objects.isNull(remoteAppConfig)) {
-					eventBus.post(new ExceptionMessage(bundle.getString("net.problem")));
-					Platform.runLater(() -> System.exit(-1));
+					throw new RuntimeException("appConfig not in local cache");
 				}
 				Repo dep = remoteAppConfig.getAppDependencies();
 				dependencis = gsonService.getLocalObject(dep.getRepositories(),
 						dep.getResources().get(0).getRelativeUrl(), Repo.class);
+				if (Objects.isNull(dependencis)) {
+					throw new RuntimeException("dependencies config not in local cache");
+				}
 				Repo res = remoteAppConfig.getAppResources();
 				resources = gsonService.getLocalObject(res.getRepositories(),
 						res.getResources().get(0).getRelativeUrl(), Repo.class);
+				if (Objects.isNull(resources)) {
+					throw new RuntimeException("resources config not in local cache");
+				}
 				Repo javaRepo = remoteAppConfig.getJavaRepo();
 				jvm = gsonService.getLocalObject(javaRepo.getRepositories(),
 						javaRepo.getResources().get(0).getRelativeUrl(), JVMConfig.class);
+				if (Objects.isNull(jvm)) {
+					throw new RuntimeException("jvm config not in local cache");
+				}
 			}
 			try {
 				appLocalConfig = fileMapperService.read(StarterAppConfig.APP_STARTER_LOCAL_CONFIG,
@@ -279,7 +287,7 @@ public class Starter {
 	/**
 	 * Run app and wait some command to switch off , cas we run in new process
 	 * switch off command 'Starter run app'
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
