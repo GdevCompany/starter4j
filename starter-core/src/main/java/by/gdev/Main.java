@@ -165,6 +165,8 @@ public class Main extends Application {
 				eventBus.post(new ExceptionMessage(
 						String.format(bundle.getString("file.delete.problem"), t.getLocalizedMessage()),
 						"https://gdev.by/help/java/check-disk"));
+			} else if (Objects.nonNull(message) && message.contains("not in local cache")) {
+				eventBus.post(new ExceptionMessage(bundle.getString("net.problem")));
 			} else {
 				String s1 = Objects.nonNull(starterConfig.getLogURIService()) ? "unidentified.error"
 						: "unidentified.error.1";
