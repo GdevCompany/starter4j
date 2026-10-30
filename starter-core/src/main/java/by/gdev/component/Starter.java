@@ -19,7 +19,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import javafx.application.Platform;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.core5.util.Timeout;
@@ -65,6 +64,7 @@ import by.gdev.util.model.InternetServerMap;
 import by.gdev.util.model.download.JvmRepo;
 import by.gdev.util.model.download.Repo;
 import by.gdev.utils.service.FileMapperService;
+import javafx.application.Platform;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -241,8 +241,8 @@ public class Starter {
 			jreContainer.setHandlers(Arrays.asList(postHandler, archiveHandler));
 			downloader.addContainer(jreContainer);
 			downloader.startDownload(true);
-			downloader.reset();
 		} finally {
+			downloader.reset();
 			DesktopUtil.diactivateDoubleDownloadingResourcesLock();
 		}
 		log.info("loading is complete");
